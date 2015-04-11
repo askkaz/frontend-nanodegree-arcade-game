@@ -1,13 +1,15 @@
+/** Global constants. */
+var ROW_POS_Y = [-41, 42, 125, 208, 291, 374];
+var MAX_ENEMY_X = 600;
+var MAX_PLAYER_X = 404;
+var START_PLAYER_X = 202;
+var CELL_WIDTH = 101;
+var CELL_HEIGHT = 83;
+
 /** Global variables. */
-var topSpeed = 200;
-var rowPosY = [-41, 42, 125, 208, 291, 374];
-var difficulty = 1;
-var maxEnemyX = 600;
-var maxPlayerX = 404;
-var startPlayerX = 202;
-var cellWidth = 101;
-var cellHeight = 83;
 var level = 1;
+var difficulty = 1;
+var topSpeed = 200;
 
 /**
  * Detects collisions
@@ -16,6 +18,19 @@ var level = 1;
  */
 function isCollision(player,enemy){
     return (player.y == enemy.y) && (Math.pow((player.x - enemy.x),2) < 3000) ? true : false;
+}
+
+function checkAllCollisions(player){
+    for (var i = allEnemies.length - 1; i >= 0; i--) {
+        if(isCollision(player,allEnemies[i])){
+            difficulty = 1;
+            player.initialize();
+            gameOver();
+            allEnemies = allEnemies.slice(0,3);
+            level = 1;
+            break;
+        }
+    }
 }
 
 /** Pop up window for game over condition. */
@@ -38,13 +53,20 @@ var Enemy = function() {
     this.initialize();
 };
 
+/** Initialize speed and position data for the enemy. */
+Enemy.prototype.initialize = function(){
+    this.speed = 100 + topSpeed * Math.random()
+    this.y = ROW_POS_Y[1 + Math.floor(3 * Math.random())]
+    this.x = -100;
+};
+
 /**
  * Updates the enemies position.
  * @param {float} dt - The time between frames.
  */
 Enemy.prototype.update = function(dt) {
     this.x += dt * this.speed * difficulty;
-    if (this.x > maxEnemyX){
+    if (this.x > MAX_ENEMY_X){
         this.initialize();
     }
 };
@@ -52,13 +74,6 @@ Enemy.prototype.update = function(dt) {
 /** Draw the enemy on the screen. */
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-/** Initialize speed and position data for the enemy. */
-Enemy.prototype.initialize = function(){
-    this.speed = 100 + topSpeed * Math.random()
-    this.y = rowPosY[1 + Math.floor(3 * Math.random())]
-    this.x = -100;
 };
 
 /**
@@ -70,18 +85,15 @@ var Player = function() {
     this.initialize();
 };
 
+/** Initialize player position. */
+Player.prototype.initialize = function(){
+    this.x = START_PLAYER_X;
+    this.y = ROW_POS_Y[5];
+};
+
 /** Checks for collisions between hero and all enemies. */
 Player.prototype.update = function() {
-    for (var i = allEnemies.length - 1; i >= 0; i--) {
-        if(isCollision(this,allEnemies[i])){
-            difficulty = 1;
-            this.initialize();
-            gameOver();
-            allEnemies = allEnemies.slice(0,3);
-            level = 1;
-            break;
-        }
-    }
+    checkAllCollisions(this);
 };
 
 /** Draw the hero on the screen. */
@@ -93,30 +105,24 @@ Player.prototype.render = function() {
 Player.prototype.handleInput = function(key) {
     switch (key){
         case 'left':
-        this.x = Math.max(this.x - cellWidth,0);
-        break;
+            this.x = Math.max(this.x - CELL_WIDTH,0);
+            break;
         case 'up':
-        this.y = Math.max(this.y - cellHeight,rowPosY[0]);
-        if (this.y === rowPosY[0]){
-            this.initialize();
-            difficulty += 0.1;
-            allEnemies.push(new Enemy);
-            levelUp();
-        }
-        break;
+            this.y = Math.max(this.y - CELL_HEIGHT,ROW_POS_Y[0]);
+            if (this.y === ROW_POS_Y[0]){
+                this.initialize();
+                difficulty += 0.1;
+                allEnemies.push(new Enemy);
+                levelUp();
+            }
+            break;
         case 'right':
-        this.x = Math.min(this.x + cellWidth,maxPlayerX);
-        break;
+            this.x = Math.min(this.x + CELL_WIDTH,MAX_PLAYER_X);
+            break;
         case 'down':
-        this.y = Math.min(this.y + cellHeight,rowPosY[5]);
-        break;
+            this.y = Math.min(this.y + CELL_HEIGHT,ROW_POS_Y[5]);
+            break;
     }
-};
-
-/** Initialize player position. */
-Player.prototype.initialize = function(){
-    this.x = startPlayerX;
-    this.y = rowPosY[5];
 };
 
 /** Instantiate the objects. */
