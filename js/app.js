@@ -1,3 +1,5 @@
+"use strict";
+
 /** Global constants. */
 var ROW_POS_Y = [-41, 42, 125, 208, 291, 374];
 var MAX_ENEMY_X = 600;
@@ -55,8 +57,8 @@ var Enemy = function() {
 
 /** Initialize speed and position data for the enemy. */
 Enemy.prototype.initialize = function(){
-    this.speed = 100 + topSpeed * Math.random()
-    this.y = ROW_POS_Y[1 + Math.floor(3 * Math.random())]
+    this.speed = 100 + topSpeed * Math.random();
+    this.y = ROW_POS_Y[1 + Math.floor(3 * Math.random())];
     this.x = -100;
 };
 
@@ -112,7 +114,7 @@ Player.prototype.handleInput = function(key) {
             if (this.y === ROW_POS_Y[0]){
                 this.initialize();
                 difficulty += 0.1;
-                allEnemies.push(new Enemy);
+                allEnemies.push(new Enemy());
                 levelUp();
             }
             break;
@@ -128,8 +130,8 @@ Player.prototype.handleInput = function(key) {
 /** Instantiate the objects. */
 var allEnemies = [];
 for (var i = 2; i >= 0; i--) {
-    allEnemies.push(new Enemy);
-};
+    allEnemies.push(new Enemy());
+}
 var player = new Player();
 
 /** Listen for key presses. */
