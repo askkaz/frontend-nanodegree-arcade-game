@@ -1,6 +1,7 @@
 frontend-nanodegree-arcade-game
 ===============================
+This is a clone of the frogger arcade game.  The goal is to get your hero to the water without being hit by one of the bugs.
 
-This is my submission for the Front End Nanodegree P3.  In addition to the basic game, here are some customizations that I added:
-Upon game reset, a pop-up notifies the player of "Game over".
-Upon success, a pop-up notifies the player of their success and what level they are moving to.  Speed is increased and another enemy is added.
+The game is played by opening the file "index.html" in a web browser.  Your hero's motion around the screen is controlled with the arrow keys (left, up, right, and down).  Upon reaching the water, the level advances and the hero is reset to the starting point.  Each level brings more bugs and faster bugs.  Game over happens when the hero is run over by a bug.
+
+Enjoy.
